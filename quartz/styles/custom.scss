@@ -1,3 +1,428 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+
+// ╔══════════════════════════════════════════════════════════════════╗
+// ║  ELESTER TTRPG — Quartz Custom Styles                           ║
+// ║  Theme: ITS by SlRvb (dark mode values ported manually)         ║
+// ╚══════════════════════════════════════════════════════════════════╝
+ 
+ 
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║  ELESTER TTRPG — Quartz Custom Styles                                   ║
+// ║  Theme: ITS by SlRvb (dark mode values ported manually)                 ║
+// ║                                                                          ║
+// ║  Sections:                                                               ║
+// ║    1. ITS Colour Variables   — maps ITS vars to Quartz CSS vars          ║
+// ║    2. Global Typography      — fonts, headings, code, hr                 ║
+// ║    3. Tags                   — pill style                                ║
+// ║    4. Tables                 — header/row colours                        ║
+// ║    5. Left Sidebar           — width, title, search, explorer tree       ║
+// ║    6. Right Sidebar          — TOC width and text size                   ║
+// ║    7. Main Content           — max width                                 ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+ 
+ 
+// ── 1. ITS COLOUR VARIABLES ──────────────────────────────────────────────────
+//
+// Quartz uses these CSS variables everywhere internally (links, borders,
+// highlights, etc.). Overriding them here means dark mode picks up the
+// exact ITS palette automatically — no need to hardcode colours elsewhere.
+//
+// ITS source variable → Quartz variable → role
+//   --note        → --light       page/content area background
+//   --table       → --lightgray   borders, sidebar item backgrounds, dividers
+//   --inactive    → --gray        muted text: dates, metadata, placeholders
+//   --text        → --darkgray    main body text colour
+//   --fg          → --dark        headings, bold, strong text
+//   --accent      → --secondary   links, active explorer items, accent UI
+//   --lite-accent → --tertiary    link/button hover state
+//   --highlight   → --highlight   text selection background
+//
+// Only applies when the page is in dark mode (saved-theme="dark").
+// If you add a light mode later, add a [saved-theme="light"] block below.
+ 
+:root[saved-theme="dark"] {
+  --light:     #1a1e24;    // ITS --note
+  --lightgray: #283345;    // ITS --table
+  --gray:      #586477;    // ITS --inactive
+  --darkgray:  #bccad8;    // ITS --text
+  --dark:      #cfd7dd;    // ITS --fg
+  --secondary: #863737;    // ITS --accent        (links, active items)
+  --tertiary:  #c94d4d;    // ITS --lite-accent   (hover)
+  --highlight: #7a141466;  // ITS --highlight     (selection bg, semi-transparent)
+}
+ 
+ 
+// ── 2. GLOBAL TYPOGRAPHY ─────────────────────────────────────────────────────
+//
+// Font stack matches ITS exactly (--font-default from the theme file).
+// Inter is loaded via Google Fonts in quartz.config.ts → theme.typography.
+// The fallback chain covers macOS, Windows, and Linux system fonts.
+ 
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+ 
+// Heading colours — two rules because:
+//   - The var() versions use Quartz's internal variables (good for components
+//     like breadcrumbs and backlinks that render heading-like text)
+//   - The hardcoded hex versions override more specifically scoped rules
+//     that Quartz applies to actual h1–h6 elements in content
+// If one stops working after a Quartz update, the other is a fallback.
+h1 { color: var(--secondary); }           // ITS --accent red
+h2 { color: var(--secondary); opacity: 0.9; }
+h3, h4, h5, h6 { color: var(--dark); }   // neutral light text
+ 
+h1, h2         { color: #c14343; }        // ITS --headers (more specific override)
+h3, h4, h5, h6 { color: #bccad8; }       // ITS --text
+ 
+// Inline code — ITS uses bright red text on a dark background.
+// !important needed because Quartz's base.scss sets these with high specificity.
+code {
+  color: #fa4545 !important;        // ITS --code-text
+  background-color: #232831 !important;  // ITS --code-bg
+}
+ 
+// Horizontal rules — subtle dark divider matching ITS --hr
+hr { border-color: #2f3b4d; }
+ 
+ 
+// ── 3. TAGS ───────────────────────────────────────────────────────────────────
+//
+// Tag pills shown on pages (from the tags: frontmatter field).
+// ITS colours: dark red background, lighter red text.
+ 
+.tag {
+  background-color: #652121;   // ITS --dark-accent
+  color: #d04e4e;               // ITS --tag-text
+  border: none;                 // removes Quartz's default border
+}
+ 
+ 
+// ── 4. TABLES ────────────────────────────────────────────────────────────────
+//
+// thead: dark red header rows (ITS --dark-accent)
+// tbody: very dark semi-transparent rows (ITS --td)
+ 
+thead tr { background-color: #652121; }
+tbody tr  { background-color: #06080c60; }
+ 
+ 
+// ── 5. LEFT SIDEBAR ───────────────────────────────────────────────────────────
+ 
+// — 5a. Overall sidebar container —
+// Two selectors because Quartz generates both class orderings in different
+// contexts (.sidebar.left on desktop, .left.sidebar in some wrapper divs).
+.sidebar.left,
+.left.sidebar {
+  width: 175px !important;    // narrower than Quartz default (~260px)
+  font-size: 0.80em;          // base size for everything inside
+  padding-top: 4px !important;
+  gap: 4px !important;        // tightens vertical space between sidebar sections
+  background-color: #0b0f13;  // ITS --outer-bar (darker than page content)
+  position: fixed;            // Makes it stick to the left
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  align-self: flex-start;
+}
+ 
+// — 5b. Site title block ("Elester TTRPG") —
+// Removes the large default padding above the title so the sidebar
+// starts immediately at the top of the viewport.
+.sidebar-header {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+ 
+.page-title {
+  font-size: 0.8em;           // slightly smaller than default
+  line-height: 1.2;
+  margin: 0 0 4px 0 !important;
+  padding: 0 !important;
+}
+ 
+// — 5c. Search bar —
+// Quartz renders search as a <button> that opens a modal.
+// Making it shorter reduces the vertical space it takes in the sidebar.
+.search {
+  & > button {
+    padding: 2px 8px !important;
+    height: 26px !important;   // default is ~36px
+    font-size: 0.75em !important;
+    margin: 0px;
+  }
+}
+ 
+// — 5d. Explorer: hide the "Explorer ∨" toggle label —
+// The toggle lets users collapse the entire file tree. Since we want the
+// tree always visible and the label wastes vertical space, we hide just
+// the button. The tree (ul) below it is unaffected.
+// NOTE: must be outside the .explorer {} block or the selector won't match.
+.explorer > button {
+  display: none !important;
+}
+ 
+// — 5e. Explorer: file tree —
+.explorer {
+  font-size: 0.80em;           // base size; individual items scale from this
+  margin-top: 2px !important;
+  overflow: hidden;            // prevents tree from bleeding outside sidebar width
+  text-overflow: ellipsis;
+ 
+  // All text nodes in the tree — compact and non-wrapping
+  li, a, span, .folder-title {
+    margin: 0;
+    padding: 1px 0;
+    line-height: 1.3;
+    font-size: 0.85em;         // compounds with .explorer font-size above
+    white-space: nowrap;      // ← add this
+    overflow: hidden;         // ← add this
+    text-overflow: ellipsis;  // ← add this
+  }
+ 
+  .folder-outer > li > a {
+    padding: 1px 0;
+    line-height: 1.3;
+  }
+ 
+  // Indentation per nesting level — default is ~20px which causes deep
+  // nesting to overflow the sidebar. 8px keeps it readable and contained.
+  ul ul {
+    padding-left: 8px !important;
+  }
+ 
+  // Collapse/expand arrow — shrunk to match the smaller text
+  .fold-icon svg {
+    width: 8px !important;
+    height: 8px !important;
+  }
+ 
+  // Gap between the arrow icon and the folder/file label
+  .folder-button {
+    gap: 2px !important;
+  }
+}
+ 
+// — 5f. Explorer: folder colours —
+// Closed folders use ITS --accent red; open/hovered use the lighter --folder-open
+.folder-title       { color: #863737; }   // ITS --accent
+.folder-title:hover { color: #e05858; }   // ITS --folder-open
+ 
+ 
+// ── 6. RIGHT SIDEBAR (TABLE OF CONTENTS) ─────────────────────────────────────
+ 
+// — 6a. Sidebar container —
+// position: sticky + margin-left: auto keeps it pinned to the right edge
+// of the page as you scroll, with no gap between it and the viewport edge.
+// font-size: 0.50em is the base — TOC link text is 0.70em relative to this,
+// giving an effective size of 0.35em of body text (very compact).
+.sidebar.right {
+  width: 180px !important;     // wide enough to avoid most word-wrapping
+  background-color: #0b0f13;   // ITS --outer-bar, matches left sidebar
+  font-size: 0.50em;
+  position: fixed;
+  right: 0;
+  top: 0;
+  align-self: flex-start;      // stops it stretching to full page height
+}
+ 
+// — 6b. TOC link items —
+// ellipsis truncation prevents any remaining long headings from wrapping.
+// The ul ul rule reduces indent between h2→h3→h4 nesting in the TOC.
+.toc li a {
+  font-size: 0.70em !important;
+  line-height: 1.3 !important;
+  padding: 0 !important;
+  white-space: nowrap;          // single line only
+  overflow: hidden;
+  text-overflow: ellipsis;      // "Long Heading Nam..." instead of wrapping
+  display: block;
+  max-width: 100%;
+ 
+  ul ul {
+    padding-left: 10px;         // TOC nesting indent
+  }
+}
+ 
+ 
+// ── 7. MAIN CONTENT ──────────────────────────────────────────────────────────
+//
+// Caps the content column width. Without this, narrowing the sidebars
+// makes the center expand to fill the freed space unattractively.
+// 860px is comfortable for TTRPG rules text at typical desktop widths.
+ 
+.page-header,
+.center {
+  max-width: 860px;
+}
+
+.page-wrapper {
+  padding-left: 185px;   // matches left sidebar width
+  padding-right: 190px;  // matches right sidebar width
+}
+
+
+
+/* ============================================================
+   Elester — Callout Styles
+   ============================================================ */
+
+
+.el-feat-card.open .el-card-collapsible {
+  max-height: 500px;
+}
+
+/* ── UNIQUE ─────────────────────────────────────────── */
+/* Maxem Initiate — white-gold, stands alone */
+.callout[data-callout="maxem-init"] {
+  --callout-color: 220, 200, 120;
+  --callout-icon: lucide-crown;
+}
+
+/* ── ELEMENTS ───────────────────────────────────────── */
+/* Each element gets a distinct colour tied to its identity */
+
+/* Fire — heat orange-red */
+.callout[data-callout="fire"] {
+  --callout-color: 220, 80, 40;
+  --callout-icon: lucide-flame;
+}
+
+/* Ice — cool cyan */
+.callout[data-callout="ice"] {
+  --callout-color: 80, 180, 220;
+  --callout-icon: lucide-snowflake;
+}
+
+/* Life — vivid green */
+.callout[data-callout="life"] {
+  --callout-color: 60, 190, 80;
+  --callout-icon: lucide-leaf;
+}
+
+/* Death — deep purple */
+.callout[data-callout="death"] {
+  --callout-color: 140, 40, 180;
+  --callout-icon: lucide-skull;
+}
+
+/* Earth — warm clay brown */
+.callout[data-callout="earth"] {
+  --callout-color: 160, 110, 40;
+  --callout-icon: lucide-mountain;
+}
+
+/* Blight — acid yellow-green */
+.callout[data-callout="blight"] {
+  --callout-color: 150, 200, 30;
+  --callout-icon: lucide-biohazard;
+}
+
+/* Flow — teal, motion */
+.callout[data-callout="flow"] {
+  --callout-color: 40, 170, 160;
+  --callout-icon: lucide-wind;
+}
+
+/* Static — electric yellow */
+.callout[data-callout="static"] {
+  --callout-color: 210, 190, 30;
+  --callout-icon: lucide-zap;
+}
+
+/* ── MAGUS ──────────────────────────────────────────── */
+/* Gold — generalist, expensive */
+.callout[data-callout="magus"] {
+  --callout-color: 210, 165, 40;
+  --callout-icon: lucide-sparkles;
+}
+
+/* ── FUNCTIONAL / BUILD-ROLE ────────────────────────── */
+/* Counterwork — dark crimson, aggressive/defensive */
+.callout[data-callout="counter"] {
+  --callout-color: 180, 30, 40;
+  --callout-icon: lucide-shield;
+}
+
+/* Economy — soft green, MP efficiency */
+.callout[data-callout="economy"] {
+  --callout-color: 60, 160, 90;
+  --callout-icon: lucide-coins;
+}
+
+/* Risk — amber warning, volatile builds */
+.callout[data-callout="risk"] {
+  --callout-color: 210, 130, 30;
+  --callout-icon: lucide-triangle-alert;
+}
+
+/* Power — deep orange, damage and output */
+.callout[data-callout="power"] {
+  --callout-color: 200, 90, 30;
+  --callout-icon: lucide-trending-up;
+}
+
+/* Tempo — steel blue, timing and AP */
+.callout[data-callout="tempo"] {
+  --callout-color: 60, 110, 200;
+  --callout-icon: lucide-timer;
+}
+
+/* Anchor — slate grey-blue, anchor/anchor reduction */
+.callout[data-callout="anchor"] {
+  --callout-color: 100, 120, 160;
+  --callout-icon: lucide-anchor;
+}
+
+/* Manifold — violet, spell learning */
+.callout[data-callout="manifold"] {
+  --callout-color: 110, 70, 190;
+  --callout-icon: lucide-book-open;
+}
+
+/* Weave — indigo, weave modification */
+.callout[data-callout="weave"] {
+  --callout-color: 80, 80, 200;
+  --callout-icon: lucide-wand;
+}
+
+/* Utility — muted teal, out-of-combat or situational */
+.callout[data-callout="utility"] {
+  --callout-color: 60, 150, 140;
+  --callout-icon: lucide-wrench;
+}
+
+/* Core — neutral, fundamental prerequisite feats */
+.callout[data-callout="core-feat"] {
+  --callout-color: 130, 130, 140;
+  --callout-icon: lucide-circle-dot;
+}
+
+/* ── LEGACY TYPES (kept for backward compatibility) ─── */
+/* These match the previous system; new files should use  */
+/* the functional types above instead.                    */
+
+.callout[data-callout="feat"] {
+  --callout-color: 180, 130, 60;
+  --callout-icon: lucide-zap;
+}
+.callout[data-callout="technique"] {
+  --callout-color: 60, 120, 200;
+  --callout-icon: lucide-layers;
+}
+.callout[data-callout="identity"] {
+  --callout-color: 130, 60, 200;
+  --callout-icon: lucide-star;
+}
+.callout[data-callout="entry"] {
+  --callout-color: 140, 140, 140;
+  --callout-icon: lucide-door-open;
+}
+.callout[data-callout="repeatable"] {
+  --callout-color: 60, 170, 100;
+  --callout-icon: lucide-refresh-cw;
+}

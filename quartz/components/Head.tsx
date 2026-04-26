@@ -90,6 +90,9 @@ export default (() => {
         {js
           .filter((resource) => resource.loadTime === "beforeDOMReady")
           .map((res) => JSResourceToScriptElement(res, true))}
+
+        <link rel="stylesheet" href={`${baseDir}/static/obsidian-theme.css`} />
+
         {additionalHead.map((resource) => {
           if (typeof resource === "function") {
             return resource(fileData)
