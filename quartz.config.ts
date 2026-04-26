@@ -16,7 +16,8 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "localhost:8080",
+    //baseUrl: "localhost:8080",
+    baseUrl: "theamizzguy.github.io/ElesterTTRPG_Website",
     ignorePatterns: [
       "private", 
       "templates", 
